@@ -1,3 +1,3 @@
 # HTB
 
-A repository which will consist of the material I use to own machines on HackTheBox
+A repository consisting of the solution to HackTheBox machines.
